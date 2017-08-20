@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+option java_package = "com.zahiar.kotlin_grpc_demo";
+
+service Demo {
+    rpc SayHello (DemoRequest) returns (DemoReply) {}
+}
+
+message DemoRequest {
+    string firstName = 1;
+    string lastName = 2;
+}
+
+message DemoReply {
+    string message = 1;
+}

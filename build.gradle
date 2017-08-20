@@ -1,0 +1,82 @@
+plugins {
+    id 'idea'
+    id 'java'
+    id 'org.jetbrains.kotlin.jvm' version '1.1.4-2'
+
+    id 'org.springframework.boot' version '1.5.6.RELEASE'
+    id 'com.google.protobuf' version '0.8.2'
+}
+
+group 'com.zahiar'
+version '1.0-SNAPSHOT'
+
+ext {
+    kotlin_version = '1.1.4-2'
+    spring_boot_version = '1.5.6.RELEASE'
+    protobuf_version = '0.8.2'
+    protobuf_protocol_version = '3.0.0'
+    grpc_version = '1.5.0'
+    grpc_springboot_version = '2.0.5'
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
+
+    compile "org.springframework.boot:spring-boot-starter-web:$spring_boot_version"
+
+    compile "com.google.protobuf:protobuf-gradle-plugin:$protobuf_version"
+    compile "org.lognet:grpc-spring-boot-starter:$grpc_springboot_version"
+    compile "io.grpc:grpc-stub:$grpc_version"
+    compile "io.grpc:grpc-protobuf:$grpc_version"
+    compile "io.grpc:grpc-netty:$grpc_version"
+}
+
+compileKotlin {
+    kotlinOptions.jvmTarget = '1.8'
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir 'src/main/protoGen'
+        }
+    }
+}
+
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:$protobuf_protocol_version"
+    }
+    plugins {
+        grpc {
+            artifact = "io.grpc:protoc-gen-grpc-java:$grpc_version"
+        }
+    }
+
+    generateProtoTasks {
+        ofSourceSet('main').each { task ->
+            task.builtins {
+                java{
+                    outputSubDir = 'protoGen'
+                }
+            }
+            task.plugins {
+                grpc {
+                    outputSubDir = 'protoGen'
+                }
+            }
+        }
+    }
+    generatedFilesBaseDir = "$projectDir/src/"
+}
+
+task cleanProtoGen{
+    doFirst{
+        delete("$projectDir/src/main/protoGen")
+    }
+}
+clean.dependsOn cleanProtoGen

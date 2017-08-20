@@ -1,0 +1,15 @@
+pluginManagement  {
+    repositories {
+        maven {
+            url 'http://jcenter.bintray.com'
+        }
+
+        maven {
+            url 'http://central.maven.org/maven2/'
+        }
+
+        gradlePluginPortal()
+    }
+}
+
+rootProject.name = 'kotlin-grpc-demo'
